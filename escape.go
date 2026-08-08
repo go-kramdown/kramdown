@@ -1,0 +1,89 @@
+// Copyright (c) the go-kramdown/kramdown authors
+//
+// SPDX-License-Identifier: BSD-3-Clause
+
+package kramdown
+
+import (
+	"regexp"
+	"strings"
+)
+
+// reEntity matches an already-formed HTML entity (named, decimal or hex) which is
+// passed through verbatim rather than having its "&" escaped.
+var reEntity = regexp.MustCompile(`&(?:\w+|#[0-9]+|#[xX][0-9a-fA-F]+);`)
+
+// escapeHTMLText escapes text content for HTML, leaving existing entities intact
+// and converting <, >, and bare & the way kramdown does.
+func escapeHTMLText(s string) string {
+	var b strings.Builder
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '&':
+			if loc := reEntity.FindStringIndex(s[i:]); loc != nil && loc[0] == 0 {
+				b.WriteString(s[i : i+loc[1]])
+				i += loc[1] - 1
+				continue
+			}
+			b.WriteString("&amp;")
+		case '<':
+			b.WriteString("&lt;")
+		case '>':
+			b.WriteString("&gt;")
+		default:
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String()
+}
+
+// escapeHTMLTextAll escapes text with kramdown's :all mode (escape_html's default):
+// every <, > and & is escaped, with no entity pass-through. This is the mode the gem
+// uses for code-span and code-block bodies, whose value is a literal string (an
+// already-formed "&name;" is escaped to "&amp;name;", not preserved).
+func escapeHTMLTextAll(s string) string {
+	var b strings.Builder
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '&':
+			b.WriteString("&amp;")
+		case '<':
+			b.WriteString("&lt;")
+		case '>':
+			b.WriteString("&gt;")
+		default:
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String()
+}
+
+// escapeHTMLAttr escapes an attribute value: &, < and " (kramdown escapes the
+// double quote as &quot; and leaves single quotes literal).
+func escapeHTMLAttr(s string) string {
+	var b strings.Builder
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '&':
+			if loc := reEntity.FindStringIndex(s[i:]); loc != nil && loc[0] == 0 {
+				b.WriteString(s[i : i+loc[1]])
+				i += loc[1] - 1
+				continue
+			}
+			b.WriteString("&amp;")
+		case '<':
+			b.WriteString("&lt;")
+		case '"':
+			b.WriteString("&quot;")
+		default:
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String()
+}
+
+// escapeHref escapes a URL for an href/src attribute: bare & becomes &amp; (but an
+// existing entity is preserved) and " becomes &quot;.
+func escapeHref(s string) string {
+	return escapeHTMLAttr(s)
+}
