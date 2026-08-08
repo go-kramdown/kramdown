@@ -23,7 +23,7 @@ var corpusExceptions = map[string]bool{
 	// test process happens to have loaded, so no pure-Go wiring can resolve or run
 	// it. (The three code blocks themselves — two Ruby, one PHP — now tokenise
 	// byte-for-byte; only the harness-injected wrapper div is unreachable.)
-	// rouge/simple is closed by the go-ruby-rouge PHP lexer + the tag-based
+	// rouge/simple is closed by the go-rouge PHP lexer + the tag-based
 	// language class; the remaining rouge cases (block & span highlighting,
 	// default_lang, guess_lang, syntax_highlighter: null, disable flags) pass too.
 	"block/06_codeblock/rouge/multiple.text": true,

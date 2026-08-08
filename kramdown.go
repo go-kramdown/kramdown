@@ -93,7 +93,7 @@ type Options struct {
 	// HTML elements are serialised verbatim. Mirrors kramdown's :html_to_native.
 	HtmlToNative bool
 	// SyntaxHighlighter selects the code highlighter. "rouge" (kramdown's default)
-	// routes code blocks/spans through the pure-Go go-ruby-rouge lexers; any other
+	// routes code blocks/spans through the pure-Go go-rouge lexers; any other
 	// value ("", "null", "minted", …) leaves them as plain <pre><code>.
 	SyntaxHighlighter string
 	// SyntaxHighlighterOpts carries the highlighter's sub-options (default_lang,

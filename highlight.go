@@ -8,10 +8,10 @@ import (
 	"regexp"
 	"strings"
 
-	rouge "github.com/go-ruby-rouge/rouge"
+	rouge "github.com/go-rouge/rouge"
 )
 
-// This file wires the pure-Go go-ruby-rouge syntax highlighter into kramdown's
+// This file wires the pure-Go go-rouge syntax highlighter into kramdown's
 // code-block and code-span rendering, mirroring the gem's default
 // syntax_highlighter: :rouge. When Rouge owns a lexer for the resolved language it
 // emits the gem's <div class="language-<x> highlighter-rouge"><div class="highlight">
