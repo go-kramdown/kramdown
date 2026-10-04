@@ -1,6 +1,6 @@
 module github.com/go-kramdown/kramdown
 
-go 1.26.4
+go 1.27.1
 
 require github.com/go-rouge/rouge v0.2.0
 
