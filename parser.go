@@ -170,7 +170,13 @@ func (p *parser) parseBlocks(lines []string, parent *Element) {
 		isEOB := strings.TrimRight(lines[i], " \t") == "^"
 		consumed := p.parseOneBlock(lines, i, parent, atBoundary)
 		i += consumed
+		// A block that re-emits its trailing blank line (a list does, once its last
+		// item ends in a blank) leaves an ElBlank as the last child: kramdown's
+		// after_block_boundary? is then true (last.type == :blank).
 		atBoundary = isEOB
+		if n := len(parent.Children); n > 0 && parent.Children[n-1].Type == ElBlank {
+			atBoundary = true
+		}
 	}
 }
 

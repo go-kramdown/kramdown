@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"unicode/utf8"
 )
 
 var reFootnoteMarker = regexp.MustCompile(`^\[\^([\w-]+)\]`)
@@ -66,6 +67,12 @@ func applyAbbreviations(els []*Element, defs map[string]abbrevDef) []*Element {
 // (?<![\w])…(?![\w]) — this holds even for abbreviations ending in punctuation.
 func splitAbbrevText(s string, keys []string, defs map[string]abbrevDef) []*Element {
 	for _, k := range keys {
+		if strings.TrimSpace(k) == "" || !utf8.ValidString(k) {
+			// A whitespace-only key yields an empty pattern that matches at every
+			// offset without consuming input (the recursion below would never end),
+			// and a key that is not valid UTF-8 cannot be compiled by regexp.
+			continue
+		}
 		pat := abbrevPattern(k)
 		for _, loc := range pat.FindAllStringIndex(s, -1) {
 			if (loc[0] > 0 && isWordByte(s[loc[0]-1])) || (loc[1] < len(s) && isWordByte(s[loc[1]])) {
