@@ -74,6 +74,23 @@ from 1).
 | `Typographic`  | `true`  | `--`→en-dash, `---`→em-dash, `...`→ellipsis, `<< >>`→guillemets.      |
 | `HardWrap`     | `true`  | Trailing two-spaces → `<br />`; when off, only `\\` forces a break.   |
 | `FootnoteNr`   | `1`     | Starting number for footnotes.                                       |
+| `Input`        | `""`    | Parser dialect: `""`/`"kramdown"` (default) or `"GFM"` (task lists).  |
+
+### Task lists (GFM)
+
+Task lists (`- [x] done`, `- [ ] todo`) are not part of kramdown's own syntax: the
+reference gem renders the `[x]` literally, and so does `go-kramdown` by default. They
+belong to the GFM dialect (`kramdown-parser-gfm`), selected with `Input: "GFM"`:
+
+```go
+o := kramdown.DefaultOptions()
+o.Input = "GFM"
+html := kramdown.ToHTML("- [x] done\n- [ ] todo\n", &o)
+```
+
+The output is byte-identical to the gem's: `<ul class="task-list">`, `<li
+class="task-list-item">` and `<input type="checkbox" class="task-list-item-checkbox"
+disabled="disabled" [checked="checked"] />`.
 
 ## Supported syntax
 
